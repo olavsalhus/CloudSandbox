@@ -1,0 +1,103 @@
+﻿@page
+@model CloudSandbox.Pages.DumpPageContextModel
+@using System.Reflection;
+@{
+    ViewData["Title"] = "Home page";
+
+    string PrintProperties(object obj, int indent, List<object> path)
+    {
+        var value = "";
+        if (indent > 5) return "";
+        if (obj == null) return "";
+        foreach (var prop in obj.GetType().GetProperties())
+        {
+            var subValue = prop.GetValue(obj);
+            value += new string(' ', indent * 4) + prop.Name + " => " + subValue?.ToString() + "\n";
+            try
+            {
+                if (subValue != null && !subValue.GetType().IsPrimitive && !path.Contains(subValue))
+                {
+                    var newPath = new List<object>(path);
+                    newPath.Add(subValue);
+                    value += PrintProperties(subValue, indent + 1, newPath);
+                }
+            }
+            catch { }
+        }
+
+        foreach (var prop in obj.GetType().GetFields())
+        {
+            var subValue = prop.GetValue(obj);
+            value += new string(' ', indent * 4) + prop.Name + " = " + subValue?.ToString() + "\n";
+            try
+            {
+                if (subValue != null && !subValue.GetType().IsPrimitive && !path.Contains(subValue))
+                {
+                    var newPath = new List<object>(path);
+                    newPath.Add(subValue);
+                    value += PrintProperties(subValue, indent + 1, newPath);
+                }
+            }
+            catch { }
+        }
+
+
+        return value;
+    }
+
+
+}
+
+<a href="#code">Goto source code</a>
+
+<code style="white-space: pre-wrap;">
+    @PrintProperties(PageContext, indent: 0, path: new List<object> { PageContext })
+</code>
+
+
+
+<pre><code class="language-csharp" id="code">
+string PrintProperties(object obj, int indent, List<object> path)
+{
+    var value = "";
+    if (indent > 4) return "";
+    if (obj == null) return "";
+    foreach (var prop in obj.GetType().GetProperties())
+    {
+        var subValue = prop.GetValue(obj);
+        value += new string(' ', indent * 4) + prop.Name + " => " + subValue?.ToString() + "\n";
+        try {
+            if (subValue != null && !subValue.GetType().IsPrimitive && !path.Contains(subValue))
+            {
+                var newPath = new List<object>(path);
+                newPath.Add(subValue);
+                value += PrintProperties(subValue, indent + 1, newPath);
+            }
+        } catch { }
+    }
+
+    foreach (var prop in obj.GetType().GetFields())
+    {
+        var subValue = prop.GetValue(obj);
+        value += new string(' ', indent * 4) + prop.Name + " = " + subValue?.ToString() + "\n";
+        try
+        {
+            if (subValue != null && !subValue.GetType().IsPrimitive && !path.Contains(subValue))
+            {
+                var newPath = new List<object>(path);
+                newPath.Add(subValue);
+                value += PrintProperties(subValue, indent + 1, newPath);
+            }
+        }
+        catch { }
+    }
+
+
+    return value;
+}
+<code style="white-space: pre-wrap;">
+    @@PrintProperties(PageContext, indent: 0, path: new List<object> { PageContext })
+</code>
+
+</code></pre>
+
