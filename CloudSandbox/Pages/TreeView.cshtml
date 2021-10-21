@@ -1,0 +1,33 @@
+﻿@page
+@model CloudSandbox.Pages.TreeViewModel
+@{
+    Layout = "_Layout";
+}
+@section css {
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.2.1/themes/default/style.min.css" />
+}
+@section js {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.2.1/jstree.min.js"></script>
+    <script>
+        $(function () {
+            $('#tree').jstree({
+                'core': {
+                    'data': {
+                        'url': function (node) {
+                            return "Nodes";
+                        },
+                        'data': function (node) {
+                            return { 'id': node.id };
+                        }
+                    }
+                }
+            });
+
+            $('#tree').on("changed.jstree", function (e, data) {
+                console.log(data.selected);
+            });
+        });
+    </script>
+}
+<div id="tree"></div>

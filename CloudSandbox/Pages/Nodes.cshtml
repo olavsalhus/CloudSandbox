@@ -1,0 +1,75 @@
+﻿@page
+@model CloudSandbox.Pages.NodesModel
+@using CloudSandbox
+@{
+    Response.ContentType = "application/json";
+
+    var Path = Request.Query["id"].ToString().Split(",", StringSplitOptions.RemoveEmptyEntries).ToList();
+    if (Path.Count() == 1 && Path[0] == "#")
+    {
+        Path = new List<string>();
+    }
+    List<Node> PrintProperties(object obj, List<string> Path, int PathIndex = 0)
+    {
+        var nodes = new List<Node>();
+        if (obj == null) return nodes;
+
+        if (Path.Count() == 0 || PathIndex >= Path.Count())
+        {
+            foreach (var prop in obj.GetType().GetProperties())
+            {
+                try
+                {
+                    var subValue = prop.GetValue(obj);
+                    nodes.Add(new Node
+                    {
+                        id = string.Join(',', Path.Concat(new List<string> { prop.Name })),
+                        text = $"{prop.Name} => {subValue?.ToString()}",
+                        children = !subValue?.GetType().IsPrimitive ?? false
+                    });
+                } catch (Exception e)
+                {
+                    nodes.Add(new Node
+                    {
+                        id = string.Join(',', Path.Concat(new List<string> { prop.Name })),
+                        text = $"{prop.Name} => {e.Message}",
+                        children = false
+                    });
+                }
+            }
+            foreach (var prop in obj.GetType().GetFields())
+            {
+                try
+                {
+                    var subValue = prop.GetValue(obj);
+                    nodes.Add(new Node
+                    {
+                        id = string.Join(',', Path.Concat(new List<string> { prop.Name })),
+                        text = $"{prop.Name} = {subValue?.ToString()}",
+                        children = !subValue?.GetType().IsPrimitive ?? false
+                    });
+                }
+                catch (Exception e)
+                {
+                    nodes.Add(new Node
+                    {
+                        id = string.Join(',', Path.Concat(new List<string> { prop.Name })),
+                        text = $"{prop.Name} = {e.Message}",
+                        children = false
+                    });
+                }
+            }
+            return nodes;
+        }
+        foreach (var prop in obj.GetType().GetProperties())
+            if (prop.Name == Path[PathIndex])
+                return PrintProperties(prop.GetValue(obj), Path, PathIndex + 1);
+
+        foreach (var prop in obj.GetType().GetFields())
+            if (prop.Name == Path[PathIndex])
+                return PrintProperties(prop.GetValue(obj), Path, PathIndex + 1);
+        
+        return nodes;
+    }
+}
+@Json.Serialize(PrintProperties(this, Path))

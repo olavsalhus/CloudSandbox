@@ -7,15 +7,19 @@
     <link rel="stylesheet" href="~/css/site.css" />
     <link rel="stylesheet"
           href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.2.0/styles/default.min.css">
+    @RenderSection("css", required: false)
+
     <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.2.0/highlight.min.js"></script>
 
     <script>hljs.highlightAll();</script>
+    @RenderSection("js", required: false)
 </head>
 <body>
     <header>
         <nav>
-            <a href="Index">Index</a> |
-            <a href="DumpPageContext">C# reflection experiment</a>
+            <a href="Index">About</a> |
+            <a href="DumpPageContext">C# reflection</a> |
+            <a href="TreeView">TreeView</a>
         </nav>
     </header>
     <hr />

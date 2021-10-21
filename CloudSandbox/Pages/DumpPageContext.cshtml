@@ -2,12 +2,13 @@
 @model CloudSandbox.Pages.DumpPageContextModel
 @using System.Reflection;
 @{
+    Layout = "_Layout";
     ViewData["Title"] = "Home page";
 
     string PrintProperties(object obj, int indent, List<object> path)
     {
         var value = "";
-        if (indent > 5) return "";
+        if (indent > 2) return "";
         if (obj == null) return "";
         foreach (var prop in obj.GetType().GetProperties())
         {
@@ -51,7 +52,7 @@
 <a href="#code">Goto source code</a>
 
 <code style="white-space: pre-wrap;">
-    @PrintProperties(PageContext, indent: 0, path: new List<object> { PageContext })
+    @PrintProperties(this, indent: 0, path: new List<object> { this })
 </code>
 
 
