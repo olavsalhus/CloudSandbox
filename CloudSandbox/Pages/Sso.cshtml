@@ -1,0 +1,27 @@
+﻿@page
+@model CloudSandbox.Pages.SsoModel
+@{
+    ViewData["Title"] = "Google single sign on demo";
+}
+
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+
+
+<script>
+    function handleCredentialResponse(response) {
+        console.log("Encoded JWT ID token: " + response.credential);
+    }
+    window.onload = function () {
+        google.accounts.id.initialize({
+            client_id: "990839783105-vqo6pgp4g0toeh17f14vujfksmqker6a.apps.googleusercontent.com",
+            callback: handleCredentialResponse
+        });
+        google.accounts.id.renderButton(
+            document.getElementById("buttonDiv"),
+            { theme: "outline", size: "large" }  // customization attributes
+        );
+        google.accounts.id.prompt(); // also display the One Tap dialog
+    }
+</script>
+
+<div id="buttonDiv"></div>
