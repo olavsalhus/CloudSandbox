@@ -11,6 +11,15 @@
 <script>
     function handleCredentialResponse(response) {
         console.log("Encoded JWT ID token: " + response.credential);
+        document.getElementById("buttonDiv").remove();
+        var url = `https://oauth2.googleapis.com/tokeninfo?id_token=${response.credential}`;
+        fetch(url)
+            .then(response => response.text())
+            .then(json => {
+                var pre = document.createElement("pre");
+                pre.innerHTML = `<code>${json}</code>`;
+                document.body.appendChild(pre);
+            })
     }
     window.onload = function () {
         google.accounts.id.initialize({
